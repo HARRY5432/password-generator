@@ -1,7 +1,7 @@
 """Generate a random password."""
+import argparse
 import random
 import string
-import sys
 
 DIGITS = string.digits
 LOWERCASE = string.ascii_lowercase
@@ -25,5 +25,7 @@ def generate_password(length=12, use_digits=True, use_lower=True, use_upper=True
     return "".join(random.choice(chars) for _ in range(length))
 
 if __name__ == "__main__":
-    length = int(sys.argv[1]) if len(sys.argv) > 1 else 12
-    print(generate_password(length))
+    parser = argparse.ArgumentParser(description="Generate passwords")
+    parser.add_argument("-l", "--length", type=int, default=12)
+    args = parser.parse_args()
+    print(generate_password(args.length))
