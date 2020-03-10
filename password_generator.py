@@ -29,8 +29,8 @@ def generate_password(length, pool):
     return "".join(random.choice(pool) for _ in range(length))
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generate passwords")
-    parser.add_argument("-l", "--length", type=int, default=12)
+    parser = argparse.ArgumentParser(description="Generate strong passwords")
+    parser.add_argument("-l", "--length", type=int, default=12, help="password length")
     args = parser.parse_args()
     pool = build_pool()
     print(generate_password(args.length, pool))
