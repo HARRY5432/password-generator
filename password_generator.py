@@ -22,6 +22,8 @@ def build_pool(use_digits=True, use_lower=True, use_upper=True, use_symbols=True
         chars += SYMBOLS
     if no_ambiguous:
         chars = "".join(c for c in chars if c not in AMBIGUOUS)
+    if len(chars) == 0:
+        raise SystemExit("Error: at least one character class must be enabled")
     return chars
 
 def generate_password(length, pool):
@@ -32,5 +34,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate strong passwords")
     parser.add_argument("-l", "--length", type=int, default=12, help="password length")
     args = parser.parse_args()
+    if args.length < 4:
+        raise SystemExit("Error: length must be at least 4")
     pool = build_pool()
     print(generate_password(args.length, pool))
