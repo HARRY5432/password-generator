@@ -33,6 +33,15 @@ def entropy(length, pool_size):
         return 0
     return length * math.log2(pool_size)
 
+def strength_label(bits):
+    """Return a human-readable strength label."""
+    if bits < 40:
+        return "WEAK"
+    elif bits < 60:
+        return "FAIR"
+    else:
+        return "STRONG"
+
 def generate_password(length, pool):
     """Generate a single random password."""
     return "".join(random.choice(pool) for _ in range(length))
@@ -45,5 +54,6 @@ if __name__ == "__main__":
         raise SystemExit("Error: length must be at least 4")
     pool = build_pool()
     pw = generate_password(args.length, pool)
+    bits = entropy(args.length, len(pool))
     print(pw)
-    print(f"entropy: {entropy(args.length, len(pool)):.1f} bits")
+    print(f"entropy: {bits:.1f} bits [{strength_label(bits)}]")
