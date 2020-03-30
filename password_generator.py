@@ -1,5 +1,6 @@
 """Generate a random password."""
 import argparse
+import math
 import random
 import string
 
@@ -26,6 +27,12 @@ def build_pool(use_digits=True, use_lower=True, use_upper=True, use_symbols=True
         raise SystemExit("Error: at least one character class must be enabled")
     return chars
 
+def entropy(length, pool_size):
+    """Calculate password entropy in bits."""
+    if pool_size <= 1:
+        return 0
+    return length * math.log2(pool_size)
+
 def generate_password(length, pool):
     """Generate a single random password."""
     return "".join(random.choice(pool) for _ in range(length))
@@ -37,4 +44,6 @@ if __name__ == "__main__":
     if args.length < 4:
         raise SystemExit("Error: length must be at least 4")
     pool = build_pool()
-    print(generate_password(args.length, pool))
+    pw = generate_password(args.length, pool)
+    print(pw)
+    print(f"entropy: {entropy(args.length, len(pool)):.1f} bits")
