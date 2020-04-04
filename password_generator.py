@@ -55,5 +55,5 @@ if __name__ == "__main__":
     pool = build_pool()
     pw = generate_password(args.length, pool)
     bits = entropy(args.length, len(pool))
-    print(pw)
-    print(f"entropy: {bits:.1f} bits [{strength_label(bits)}]")
+    label = strength_label(bits)
+    print(f"{pw}  [{label}]")
