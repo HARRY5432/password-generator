@@ -1,6 +1,8 @@
 """Generate a random password."""
 import argparse
+import json
 import math
+import os
 import random
 import string
 
@@ -9,6 +11,7 @@ LOWERCASE = string.ascii_lowercase
 UPPERCASE = string.ascii_uppercase
 SYMBOLS = "!@#$%^&*()-_=+[]{};:,.<>?"
 AMBIGUOUS = "Il1O0o"
+HISTORY_FILE = "password_history.json"
 
 def build_pool(use_digits=True, use_lower=True, use_upper=True, use_symbols=True, no_ambiguous=False):
     """Build the character pool from enabled classes."""
@@ -34,7 +37,6 @@ def entropy(length, pool_size):
     return length * math.log2(pool_size)
 
 def strength_label(bits):
-    """Return a human-readable strength label."""
     if bits < 40:
         return "WEAK"
     elif bits < 60:
@@ -43,8 +45,16 @@ def strength_label(bits):
         return "STRONG"
 
 def generate_password(length, pool):
-    """Generate a single random password."""
     return "".join(random.choice(pool) for _ in range(length))
+
+def save_to_history(password, length, bits, label):
+    history = []
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE) as f:
+            history = json.load(f)
+    history.append({"password": password, "length": length, "entropy": round(bits, 1), "strength": label})
+    with open(HISTORY_FILE, "w") as f:
+        json.dump(history, f, indent=2)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate strong passwords")
@@ -56,4 +66,5 @@ if __name__ == "__main__":
     pw = generate_password(args.length, pool)
     bits = entropy(args.length, len(pool))
     label = strength_label(bits)
+    save_to_history(pw, args.length, bits, label)
     print(f"{pw}  [{label}]")
