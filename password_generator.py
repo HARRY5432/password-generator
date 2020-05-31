@@ -14,7 +14,6 @@ AMBIGUOUS = "Il1O0o"
 HISTORY_FILE = "password_history.json"
 
 def build_pool(use_digits=True, use_lower=True, use_upper=True, use_symbols=True, no_ambiguous=False):
-    """Build the character pool from enabled classes."""
     chars = ""
     if use_digits:
         chars += DIGITS
@@ -31,7 +30,6 @@ def build_pool(use_digits=True, use_lower=True, use_upper=True, use_symbols=True
     return chars
 
 def entropy(length, pool_size):
-    """Calculate password entropy in bits."""
     if pool_size <= 1:
         return 0
     return length * math.log2(pool_size)
@@ -47,11 +45,17 @@ def strength_label(bits):
 def generate_password(length, pool):
     return "".join(random.choice(pool) for _ in range(length))
 
-def save_to_history(password, length, bits, label):
-    history = []
+def load_history():
     if os.path.exists(HISTORY_FILE):
-        with open(HISTORY_FILE) as f:
-            history = json.load(f)
+        try:
+            with open(HISTORY_FILE) as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            return []
+    return []
+
+def save_to_history(password, length, bits, label):
+    history = load_history()
     history.append({"password": password, "length": length, "entropy": round(bits, 1), "strength": label})
     with open(HISTORY_FILE, "w") as f:
         json.dump(history, f, indent=2)
@@ -59,6 +63,7 @@ def save_to_history(password, length, bits, label):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate strong passwords")
     parser.add_argument("-l", "--length", type=int, default=12, help="password length")
+    parser.add_argument("--save", action="store_true", help="save to history")
     args = parser.parse_args()
     if args.length < 4:
         raise SystemExit("Error: length must be at least 4")
@@ -66,5 +71,6 @@ if __name__ == "__main__":
     pw = generate_password(args.length, pool)
     bits = entropy(args.length, len(pool))
     label = strength_label(bits)
-    save_to_history(pw, args.length, bits, label)
+    if args.save:
+        save_to_history(pw, args.length, bits, label)
     print(f"{pw}  [{label}]")
