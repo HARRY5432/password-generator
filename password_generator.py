@@ -5,6 +5,7 @@ import math
 import os
 import random
 import string
+from datetime import datetime
 
 DIGITS = string.digits
 LOWERCASE = string.ascii_lowercase
@@ -56,7 +57,13 @@ def load_history():
 
 def save_to_history(password, length, bits, label):
     history = load_history()
-    history.append({"password": password, "length": length, "entropy": round(bits, 1), "strength": label})
+    history.append({
+        "password": password,
+        "length": length,
+        "entropy": round(bits, 1),
+        "strength": label,
+        "timestamp": datetime.now().isoformat()
+    })
     with open(HISTORY_FILE, "w") as f:
         json.dump(history, f, indent=2)
 
