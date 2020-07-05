@@ -71,13 +71,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate strong passwords")
     parser.add_argument("-l", "--length", type=int, default=12, help="password length")
     parser.add_argument("--save", action="store_true", help="save to history")
+    parser.add_argument("--load", action="store_true", help="show saved passwords")
     args = parser.parse_args()
-    if args.length < 4:
-        raise SystemExit("Error: length must be at least 4")
-    pool = build_pool()
-    pw = generate_password(args.length, pool)
-    bits = entropy(args.length, len(pool))
-    label = strength_label(bits)
-    if args.save:
-        save_to_history(pw, args.length, bits, label)
-    print(f"{pw}  [{label}]")
+    if args.load:
+        for entry in load_history():
+            print(f"{entry['password']}  [{entry['strength']}]  {entry.get('timestamp', '')}")
+    else:
+        if args.length < 4:
+            raise SystemExit("Error: length must be at least 4")
+        pool = build_pool()
+        pw = generate_password(args.length, pool)
+        bits = entropy(args.length, len(pool))
+        label = strength_label(bits)
+        if args.save:
+            save_to_history(pw, args.length, bits, label)
+        print(f"{pw}  [{label}]")
