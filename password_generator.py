@@ -1,5 +1,6 @@
 """Generate a random password."""
 import argparse
+import csv
 import json
 import math
 import os
@@ -67,13 +68,24 @@ def save_to_history(password, length, bits, label):
     with open(HISTORY_FILE, "w") as f:
         json.dump(history, f, indent=2)
 
+def export_csv(filename="passwords.csv"):
+    history = load_history()
+    with open(filename, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=["password", "length", "entropy", "strength", "timestamp"])
+        writer.writeheader()
+        writer.writerows(history)
+    print(f"exported {len(history)} entries to {filename}")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate strong passwords")
     parser.add_argument("-l", "--length", type=int, default=12, help="password length")
     parser.add_argument("--save", action="store_true", help="save to history")
     parser.add_argument("--load", action="store_true", help="show saved passwords")
+    parser.add_argument("--export", action="store_true", help="export history to csv")
     args = parser.parse_args()
-    if args.load:
+    if args.export:
+        export_csv()
+    elif args.load:
         for entry in load_history():
             print(f"{entry['password']}  [{entry['strength']}]  {entry.get('timestamp', '')}")
     else:
