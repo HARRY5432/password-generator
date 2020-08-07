@@ -15,6 +15,8 @@ SYMBOLS = "!@#$%^&*()-_=+[]{};:,.<>?"
 AMBIGUOUS = "Il1O0o"
 HISTORY_FILE = "password_history.json"
 
+WORD_LIST = ["apple", "brave", "cloud", "delta", "eagle", "flame", "grape", "house", "ivory", "jolly"]
+
 def build_pool(use_digits=True, use_lower=True, use_upper=True, use_symbols=True, no_ambiguous=False):
     chars = ""
     if use_digits:
@@ -46,6 +48,9 @@ def strength_label(bits):
 
 def generate_password(length, pool):
     return "".join(random.choice(pool) for _ in range(length))
+
+def generate_passphrase(num_words=4):
+    return "-".join(random.choice(WORD_LIST) for _ in range(num_words))
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
@@ -82,12 +87,15 @@ if __name__ == "__main__":
     parser.add_argument("--save", action="store_true", help="save to history")
     parser.add_argument("--load", action="store_true", help="show saved passwords")
     parser.add_argument("--export", action="store_true", help="export history to csv")
+    parser.add_argument("--passphrase", action="store_true", help="generate passphrase instead")
     args = parser.parse_args()
     if args.export:
         export_csv()
     elif args.load:
         for entry in load_history():
             print(f"{entry['password']}  [{entry['strength']}]  {entry.get('timestamp', '')}")
+    elif args.passphrase:
+        print(generate_passphrase())
     else:
         if args.length < 4:
             raise SystemExit("Error: length must be at least 4")
