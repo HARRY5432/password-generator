@@ -86,6 +86,29 @@ def export_csv(filename="passwords.csv"):
         writer.writerows(history)
     print(f"exported {len(history)} entries to {filename}")
 
+def interactive_mode():
+    print("password generator - interactive mode")
+    print("type 'gen', 'pass', 'history', 'export', or 'quit'")
+    while True:
+        try:
+            cmd = input("> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if cmd == "quit":
+            break
+        elif cmd == "gen":
+            pool = build_pool()
+            pw = generate_password(16, pool)
+            bits = entropy(16, len(pool))
+            print(f"{pw}  [{strength_label(bits)}]")
+        elif cmd == "pass":
+            print(generate_passphrase())
+        elif cmd == "history":
+            for e in load_history():
+                print(f"{e['password']}  [{e['strength']}]")
+        elif cmd == "export":
+            export_csv()
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate strong passwords")
     parser.add_argument("-l", "--length", type=int, default=12, help="password length")
@@ -93,8 +116,11 @@ if __name__ == "__main__":
     parser.add_argument("--load", action="store_true", help="show saved passwords")
     parser.add_argument("--export", action="store_true", help="export history to csv")
     parser.add_argument("--passphrase", action="store_true", help="generate passphrase instead")
+    parser.add_argument("--interactive", action="store_true", help="interactive mode")
     args = parser.parse_args()
-    if args.export:
+    if args.interactive:
+        interactive_mode()
+    elif args.export:
         export_csv()
     elif args.load:
         for entry in load_history():
