@@ -15,7 +15,12 @@ SYMBOLS = "!@#$%^&*()-_=+[]{};:,.<>?"
 AMBIGUOUS = "Il1O0o"
 HISTORY_FILE = "password_history.json"
 
-WORD_LIST = ["apple", "brave", "cloud", "delta", "eagle", "flame", "grape", "house", "ivory", "jolly"]
+WORD_LIST = [
+    "apple", "brave", "cloud", "delta", "eagle", "flame", "grape", "house",
+    "ivory", "jolly", "kneel", "lemon", "mango", "noble", "ocean", "piano",
+    "quest", "river", "storm", "tiger", "unity", "vivid", "whale", "xenon",
+    "yacht", "zebra", "amber", "blaze", "coral", "drift"
+]
 
 def build_pool(use_digits=True, use_lower=True, use_upper=True, use_symbols=True, no_ambiguous=False):
     chars = ""
