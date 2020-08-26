@@ -54,8 +54,8 @@ def strength_label(bits):
 def generate_password(length, pool):
     return "".join(random.choice(pool) for _ in range(length))
 
-def generate_passphrase(num_words=4):
-    return "-".join(random.choice(WORD_LIST) for _ in range(num_words))
+def generate_passphrase(num_words=4, separator="-"):
+    return separator.join(random.choice(WORD_LIST) for _ in range(num_words))
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
