@@ -88,7 +88,7 @@ def export_csv(filename="passwords.csv"):
 
 def interactive_mode():
     print("password generator - interactive mode")
-    print("type 'gen', 'pass', 'history', 'export', or 'quit'")
+    print("commands: gen, pass, history, export, help, quit")
     while True:
         try:
             cmd = input("> ").strip()
@@ -96,6 +96,8 @@ def interactive_mode():
             break
         if cmd == "quit":
             break
+        elif cmd == "help":
+            print("gen     - generate a password\npass    - generate passphrase\nhistory - show saved\nexport  - export csv\nquit    - exit")
         elif cmd == "gen":
             pool = build_pool()
             pw = generate_password(16, pool)
