@@ -89,6 +89,7 @@ def export_csv(filename="passwords.csv"):
 def interactive_mode():
     print("password generator - interactive mode")
     print("commands: gen, pass, history, export, help, quit")
+    session_history = []
     while True:
         try:
             cmd = input("> ").strip()
@@ -102,12 +103,19 @@ def interactive_mode():
             pool = build_pool()
             pw = generate_password(16, pool)
             bits = entropy(16, len(pool))
-            print(f"{pw}  [{strength_label(bits)}]")
+            label = strength_label(bits)
+            session_history.append(pw)
+            print(f"{pw}  [{label}]")
         elif cmd == "pass":
-            print(generate_passphrase())
+            pp = generate_passphrase()
+            session_history.append(pp)
+            print(pp)
         elif cmd == "history":
             for e in load_history():
                 print(f"{e['password']}  [{e['strength']}]")
+        elif cmd == "session":
+            for i, pw in enumerate(session_history, 1):
+                print(f"  {i}. {pw}")
         elif cmd == "export":
             export_csv()
 
