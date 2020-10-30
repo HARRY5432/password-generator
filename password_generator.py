@@ -87,9 +87,21 @@ def export_csv(filename="passwords.csv"):
         writer.writerows(history)
     print(f"exported {len(history)} entries to {filename}")
 
+def show_stats():
+    history = load_history()
+    if not history:
+        print("no passwords saved yet")
+        return
+    entropies = [e["entropy"] for e in history]
+    avg = sum(entropies) / len(entropies)
+    print(f"total: {len(history)} passwords")
+    print(f"avg entropy: {avg:.1f} bits")
+    print(f"strongest: {max(entropies):.1f} bits")
+    print(f"weakest: {min(entropies):.1f} bits")
+
 def interactive_mode():
     print("password generator - interactive mode")
-    print("commands: gen, pass, history, export, help, quit")
+    print("commands: gen, pass, history, stats, export, help, quit")
     session_history = []
     while True:
         try:
@@ -100,7 +112,7 @@ def interactive_mode():
         if cmd == "quit":
             break
         elif cmd == "help":
-            print("gen     - generate a password\npass    - generate passphrase\nhistory - show saved\nexport  - export csv\nquit    - exit")
+            print("gen     - generate a password\npass    - generate passphrase\nhistory - show saved\nstats   - show statistics\nexport  - export csv\nquit    - exit")
         elif cmd == "gen":
             pool = build_pool()
             pw = generate_password(16, pool)
@@ -115,6 +127,8 @@ def interactive_mode():
         elif cmd == "history":
             for e in load_history():
                 print(f"{e['password']}  [{e['strength']}]")
+        elif cmd == "stats":
+            show_stats()
         elif cmd == "session":
             for i, pw in enumerate(session_history, 1):
                 print(f"  {i}. {pw}")
@@ -129,9 +143,12 @@ if __name__ == "__main__":
     parser.add_argument("--export", action="store_true", help="export history to csv")
     parser.add_argument("--passphrase", action="store_true", help="generate passphrase instead")
     parser.add_argument("--interactive", action="store_true", help="interactive mode")
+    parser.add_argument("--stats", action="store_true", help="show statistics")
     args = parser.parse_args()
     if args.interactive:
         interactive_mode()
+    elif args.stats:
+        show_stats()
     elif args.export:
         export_csv()
     elif args.load:
