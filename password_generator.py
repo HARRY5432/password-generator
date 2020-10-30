@@ -6,6 +6,7 @@ import math
 import os
 import random
 import string
+import sys
 from datetime import datetime
 
 DIGITS = string.digits
@@ -94,6 +95,7 @@ def interactive_mode():
         try:
             cmd = input("> ").strip()
         except (EOFError, KeyboardInterrupt):
+            print("\ngoodbye!")
             break
         if cmd == "quit":
             break
