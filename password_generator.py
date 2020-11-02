@@ -16,6 +16,11 @@ SYMBOLS = "!@#$%^&*()-_=+[]{};:,.<>?"
 AMBIGUOUS = "Il1O0o"
 HISTORY_FILE = "password_history.json"
 
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+RESET = "\033[0m"
+
 WORD_LIST = [
     "apple", "brave", "cloud", "delta", "eagle", "flame", "grape", "house",
     "ivory", "jolly", "kneel", "lemon", "mango", "noble", "ocean", "piano",
@@ -51,6 +56,14 @@ def strength_label(bits):
         return "FAIR"
     else:
         return "STRONG"
+
+def colored_label(label):
+    if label == "WEAK":
+        return f"{RED}{label}{RESET}"
+    elif label == "FAIR":
+        return f"{YELLOW}{label}{RESET}"
+    else:
+        return f"{GREEN}{label}{RESET}"
 
 def generate_password(length, pool):
     return "".join(random.choice(pool) for _ in range(length))
@@ -119,7 +132,7 @@ def interactive_mode():
             bits = entropy(16, len(pool))
             label = strength_label(bits)
             session_history.append(pw)
-            print(f"{pw}  [{label}]")
+            print(f"{pw}  [{colored_label(label)}]")
         elif cmd == "pass":
             pp = generate_passphrase()
             session_history.append(pp)
@@ -165,4 +178,4 @@ if __name__ == "__main__":
         label = strength_label(bits)
         if args.save:
             save_to_history(pw, args.length, bits, label)
-        print(f"{pw}  [{label}]")
+        print(f"{pw}  [{colored_label(label)}]")
