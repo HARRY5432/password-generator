@@ -16,6 +16,9 @@ SYMBOLS = "!@#$%^&*()-_=+[]{};:,.<>?"
 AMBIGUOUS = "Il1O0o"
 HISTORY_FILE = "password_history.json"
 
+if sys.platform == "win32":
+    os.system("")
+
 RED = "\033[91m"
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
