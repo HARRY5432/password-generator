@@ -9,6 +9,7 @@ import string
 import sys
 from datetime import datetime
 
+VERSION = "1.0"
 DIGITS = string.digits
 LOWERCASE = string.ascii_lowercase
 UPPERCASE = string.ascii_uppercase
@@ -116,8 +117,8 @@ def show_stats():
     print(f"weakest: {min(entropies):.1f} bits")
 
 def interactive_mode():
-    print("password generator - interactive mode")
-    print("commands: gen, pass, history, stats, export, help, quit")
+    print(f"password generator v{VERSION} - interactive mode")
+    print("commands: gen, pass, history, stats, export, version, help, quit")
     session_history = []
     while True:
         try:
@@ -127,8 +128,10 @@ def interactive_mode():
             break
         if cmd == "quit":
             break
+        elif cmd == "version":
+            print(f"v{VERSION}")
         elif cmd == "help":
-            print("gen     - generate a password\npass    - generate passphrase\nhistory - show saved\nstats   - show statistics\nexport  - export csv\nquit    - exit")
+            print("gen     - generate a password\npass    - generate passphrase\nhistory - show saved\nstats   - show statistics\nexport  - export csv\nversion - show version\nquit    - exit")
         elif cmd == "gen":
             pool = build_pool()
             pw = generate_password(16, pool)
@@ -160,6 +163,7 @@ if __name__ == "__main__":
     parser.add_argument("--passphrase", action="store_true", help="generate passphrase instead")
     parser.add_argument("--interactive", action="store_true", help="interactive mode")
     parser.add_argument("--stats", action="store_true", help="show statistics")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
     args = parser.parse_args()
     if args.interactive:
         interactive_mode()
