@@ -116,9 +116,14 @@ def show_stats():
     print(f"strongest: {max(entropies):.1f} bits")
     print(f"weakest: {min(entropies):.1f} bits")
 
+def show_about():
+    print(f"password generator v{VERSION}")
+    print("generates cryptographically secure passwords using the secrets module")
+    print("supports character classes, passphrases, history, and strength metering")
+
 def interactive_mode():
     print(f"password generator v{VERSION} - interactive mode")
-    print("commands: gen, pass, history, stats, export, version, help, quit")
+    print("commands: gen, pass, history, stats, about, export, version, help, quit")
     session_history = []
     while True:
         try:
@@ -130,8 +135,10 @@ def interactive_mode():
             break
         elif cmd == "version":
             print(f"v{VERSION}")
+        elif cmd == "about":
+            show_about()
         elif cmd == "help":
-            print("gen     - generate a password\npass    - generate passphrase\nhistory - show saved\nstats   - show statistics\nexport  - export csv\nversion - show version\nquit    - exit")
+            print("gen     - generate a password\npass    - generate passphrase\nhistory - show saved\nstats   - show statistics\nabout   - about this tool\nexport  - export csv\nversion - show version\nquit    - exit")
         elif cmd == "gen":
             pool = build_pool()
             pw = generate_password(16, pool)
