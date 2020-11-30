@@ -121,6 +121,52 @@ def show_about():
     print("generates cryptographically secure passwords using the secrets module")
     print("supports character classes, passphrases, history, and strength metering")
 
+def main():
+    parser = argparse.ArgumentParser(description="Generate strong passwords")
+    parser.add_argument("-l", "--length", type=int, default=12, help="password length")
+    parser.add_argument("-n", "--number", type=int, default=1, help="number of passwords")
+    parser.add_argument("--save", action="store_true", help="save to history")
+    parser.add_argument("--load", action="store_true", help="show saved passwords")
+    parser.add_argument("--export", action="store_true", help="export history to csv")
+    parser.add_argument("--passphrase", action="store_true", help="generate passphrase instead")
+    parser.add_argument("--interactive", action="store_true", help="interactive mode")
+    parser.add_argument("--stats", action="store_true", help="show statistics")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
+    parser.add_argument("--no-digits", action="store_true", help="exclude digits")
+    parser.add_argument("--no-lower", action="store_true", help="exclude lowercase")
+    parser.add_argument("--no-upper", action="store_true", help="exclude uppercase")
+    parser.add_argument("--no-symbols", action="store_true", help="exclude symbols")
+    parser.add_argument("--no-ambiguous", action="store_true", help="exclude ambiguous chars")
+    args = parser.parse_args()
+    if args.interactive:
+        interactive_mode()
+    elif args.stats:
+        show_stats()
+    elif args.export:
+        export_csv()
+    elif args.load:
+        for entry in load_history():
+            print(f"{entry['password']}  [{entry['strength']}]  {entry.get('timestamp', '')}")
+    elif args.passphrase:
+        print(generate_passphrase())
+    else:
+        if args.length < 4:
+            raise SystemExit("Error: length must be at least 4")
+        pool = build_pool(
+            use_digits=not args.no_digits,
+            use_lower=not args.no_lower,
+            use_upper=not args.no_upper,
+            use_symbols=not args.no_symbols,
+            no_ambiguous=args.no_ambiguous,
+        )
+        for _ in range(args.number):
+            pw = generate_password(args.length, pool)
+            bits = entropy(args.length, len(pool))
+            label = strength_label(bits)
+            if args.save:
+                save_to_history(pw, args.length, bits, label)
+            print(f"{pw}  [{colored_label(label)}]")
+
 def interactive_mode():
     print(f"password generator v{VERSION} - interactive mode")
     print("commands: gen, pass, history, stats, about, export, version, help, quit")
@@ -162,34 +208,4 @@ def interactive_mode():
             export_csv()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generate strong passwords")
-    parser.add_argument("-l", "--length", type=int, default=12, help="password length")
-    parser.add_argument("--save", action="store_true", help="save to history")
-    parser.add_argument("--load", action="store_true", help="show saved passwords")
-    parser.add_argument("--export", action="store_true", help="export history to csv")
-    parser.add_argument("--passphrase", action="store_true", help="generate passphrase instead")
-    parser.add_argument("--interactive", action="store_true", help="interactive mode")
-    parser.add_argument("--stats", action="store_true", help="show statistics")
-    parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
-    args = parser.parse_args()
-    if args.interactive:
-        interactive_mode()
-    elif args.stats:
-        show_stats()
-    elif args.export:
-        export_csv()
-    elif args.load:
-        for entry in load_history():
-            print(f"{entry['password']}  [{entry['strength']}]  {entry.get('timestamp', '')}")
-    elif args.passphrase:
-        print(generate_passphrase())
-    else:
-        if args.length < 4:
-            raise SystemExit("Error: length must be at least 4")
-        pool = build_pool()
-        pw = generate_password(args.length, pool)
-        bits = entropy(args.length, len(pool))
-        label = strength_label(bits)
-        if args.save:
-            save_to_history(pw, args.length, bits, label)
-        print(f"{pw}  [{colored_label(label)}]")
+    main()
