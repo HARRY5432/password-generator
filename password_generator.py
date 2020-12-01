@@ -32,6 +32,8 @@ WORD_LIST = [
     "yacht", "zebra", "amber", "blaze", "coral", "drift"
 ]
 
+COMMON_PASSWORDS = {"password", "123456", "qwerty", "abc123", "letmein", "admin", "welcome"}
+
 def build_pool(use_digits=True, use_lower=True, use_upper=True, use_symbols=True, no_ambiguous=False):
     chars = ""
     if use_digits:
@@ -74,6 +76,9 @@ def generate_password(length, pool):
 
 def generate_passphrase(num_words=4, separator="-"):
     return separator.join(random.choice(WORD_LIST) for _ in range(num_words))
+
+def check_breach(password):
+    return password.lower() in COMMON_PASSWORDS
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
@@ -163,9 +168,13 @@ def main():
             pw = generate_password(args.length, pool)
             bits = entropy(args.length, len(pool))
             label = strength_label(bits)
-            if args.save:
-                save_to_history(pw, args.length, bits, label)
-            print(f"{pw}  [{colored_label(label)}]")
+            breached = check_breach(pw)
+            if breached:
+                print(f"{pw}  [{colored_label('WEAK')}] WARNING: common password!")
+            else:
+                if args.save:
+                    save_to_history(pw, args.length, bits, label)
+                print(f"{pw}  [{colored_label(label)}]")
 
 def interactive_mode():
     print(f"password generator v{VERSION} - interactive mode")
