@@ -77,6 +77,9 @@ def generate_password(length, pool):
 def generate_passphrase(num_words=4, separator="-"):
     return separator.join(random.choice(WORD_LIST) for _ in range(num_words))
 
+def generate_random_number(low=1, high=100):
+    return random.randint(low, high)
+
 def check_breach(password):
     return password.lower() in COMMON_PASSWORDS
 
@@ -178,7 +181,7 @@ def main():
 
 def interactive_mode():
     print(f"password generator v{VERSION} - interactive mode")
-    print("commands: gen, pass, history, stats, about, export, version, help, quit")
+    print("commands: gen, pass, rand, history, stats, about, export, version, help, quit")
     session_history = []
     while True:
         try:
@@ -193,7 +196,7 @@ def interactive_mode():
         elif cmd == "about":
             show_about()
         elif cmd == "help":
-            print("gen     - generate a password\npass    - generate passphrase\nhistory - show saved\nstats   - show statistics\nabout   - about this tool\nexport  - export csv\nversion - show version\nquit    - exit")
+            print("gen     - generate a password\npass    - generate passphrase\nrand    - random number\nhistory - show saved\nstats   - show statistics\nabout   - about this tool\nexport  - export csv\nversion - show version\nquit    - exit")
         elif cmd == "gen":
             pool = build_pool()
             pw = generate_password(16, pool)
@@ -205,6 +208,8 @@ def interactive_mode():
             pp = generate_passphrase()
             session_history.append(pp)
             print(pp)
+        elif cmd == "rand":
+            print(generate_random_number())
         elif cmd == "history":
             for e in load_history():
                 print(f"{e['password']}  [{e['strength']}]")
