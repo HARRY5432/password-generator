@@ -7,6 +7,7 @@ import os
 import random
 import string
 import sys
+import uuid
 from datetime import datetime
 
 VERSION = "1.0"
@@ -79,6 +80,9 @@ def generate_passphrase(num_words=4, separator="-"):
 
 def generate_random_number(low=1, high=100):
     return random.randint(low, high)
+
+def generate_uuid():
+    return str(uuid.uuid4())
 
 def check_breach(password):
     return password.lower() in COMMON_PASSWORDS
@@ -181,7 +185,7 @@ def main():
 
 def interactive_mode():
     print(f"password generator v{VERSION} - interactive mode")
-    print("commands: gen, pass, rand, history, stats, about, export, version, help, quit")
+    print("commands: gen, pass, rand, uuid, history, stats, about, export, version, help, quit")
     session_history = []
     while True:
         try:
@@ -196,7 +200,7 @@ def interactive_mode():
         elif cmd == "about":
             show_about()
         elif cmd == "help":
-            print("gen     - generate a password\npass    - generate passphrase\nrand    - random number\nhistory - show saved\nstats   - show statistics\nabout   - about this tool\nexport  - export csv\nversion - show version\nquit    - exit")
+            print("gen     - generate a password\npass    - generate passphrase\nrand    - random number\nuuid    - generate UUID\nhistory - show saved\nstats   - show statistics\nabout   - about this tool\nexport  - export csv\nversion - show version\nquit    - exit")
         elif cmd == "gen":
             pool = build_pool()
             pw = generate_password(16, pool)
@@ -210,6 +214,8 @@ def interactive_mode():
             print(pp)
         elif cmd == "rand":
             print(generate_random_number())
+        elif cmd == "uuid":
+            print(generate_uuid())
         elif cmd == "history":
             for e in load_history():
                 print(f"{e['password']}  [{e['strength']}]")
