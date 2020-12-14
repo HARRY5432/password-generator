@@ -128,6 +128,13 @@ def show_stats():
     print(f"strongest: {max(entropies):.1f} bits")
     print(f"weakest: {min(entropies):.1f} bits")
 
+def show_summary():
+    history = load_history()
+    weak = sum(1 for e in history if e["strength"] == "WEAK")
+    fair = sum(1 for e in history if e["strength"] == "FAIR")
+    strong = sum(1 for e in history if e["strength"] == "STRONG")
+    print(f"summary: {len(history)} total | {weak} weak | {fair} fair | {strong} strong")
+
 def show_about():
     print(f"password generator v{VERSION}")
     print("generates cryptographically secure passwords using the secrets module")
@@ -185,7 +192,7 @@ def main():
 
 def interactive_mode():
     print(f"password generator v{VERSION} - interactive mode")
-    print("commands: gen, pass, rand, uuid, history, stats, about, export, version, help, quit")
+    print("commands: gen, pass, rand, uuid, history, stats, summary, about, export, version, help, quit")
     session_history = []
     while True:
         try:
@@ -200,7 +207,7 @@ def interactive_mode():
         elif cmd == "about":
             show_about()
         elif cmd == "help":
-            print("gen     - generate a password\npass    - generate passphrase\nrand    - random number\nuuid    - generate UUID\nhistory - show saved\nstats   - show statistics\nabout   - about this tool\nexport  - export csv\nversion - show version\nquit    - exit")
+            print("gen     - generate a password\npass    - generate passphrase\nrand    - random number\nuuid    - generate UUID\nhistory - show saved\nstats   - show statistics\nsummary - quick summary\nabout   - about this tool\nexport  - export csv\nversion - show version\nquit    - exit")
         elif cmd == "gen":
             pool = build_pool()
             pw = generate_password(16, pool)
@@ -221,6 +228,8 @@ def interactive_mode():
                 print(f"{e['password']}  [{e['strength']}]")
         elif cmd == "stats":
             show_stats()
+        elif cmd == "summary":
+            show_summary()
         elif cmd == "session":
             for i, pw in enumerate(session_history, 1):
                 print(f"  {i}. {pw}")
