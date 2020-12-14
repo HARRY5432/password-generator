@@ -192,6 +192,7 @@ def main():
 
 def interactive_mode():
     print(f"password generator v{VERSION} - interactive mode")
+    print(f"current time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("commands: gen, pass, rand, uuid, history, stats, summary, about, export, version, help, quit")
     session_history = []
     while True:
