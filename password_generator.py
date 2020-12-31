@@ -10,7 +10,7 @@ import sys
 import uuid
 from datetime import datetime
 
-VERSION = "1.0"
+VERSION = "1.1"
 DIGITS = string.digits
 LOWERCASE = string.ascii_lowercase
 UPPERCASE = string.ascii_uppercase
